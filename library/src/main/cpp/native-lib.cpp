@@ -76,3 +76,7 @@ int rgb_clamp(int value) {
     }
     return value;
 }
+
+extern "C" JNIEXPORT jstring JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_test(JNIEnv *env, jclass type) {
+    return env->NewStringUTF("asdf");
+}
