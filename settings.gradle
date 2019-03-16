@@ -1,1 +1,1 @@
-include ':sample', ':photofilters'
+include ':sample', ':library'
