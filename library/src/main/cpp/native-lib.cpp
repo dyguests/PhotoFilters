@@ -54,9 +54,6 @@ int rgb_clamp(int value) {
     return value;
 }
 
-extern "C" JNIEXPORT jstring JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_test(JNIEnv *env, jclass type) {
-    return env->NewStringUTF("asdf");
-}
 extern "C" JNIEXPORT void JNICALL
 Java_com_fanhl_photofilters_PhotoFilterApi_brightness(JNIEnv *env, jclass obj, jobject bitmap, jfloat brightnessValue) {
     AndroidBitmapInfo info;

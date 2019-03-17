@@ -7,8 +7,6 @@ public class PhotoFilterApi {
         System.loadLibrary("native-lib");
     }
 
-    public native static String test();
-
     /**
      * 过滤亮度
      *
