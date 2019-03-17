@@ -1,10 +1,11 @@
-package com.fanhl.photofilters.sample
+package com.fanhl.photofilters.sample.ui.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.fanhl.photofilters.sample.R
 import com.fanhl.photofilters.sample.adapter.FilterAdapter
-import com.fanhl.photofilters.sample.common.BaseViewModel
+import com.fanhl.photofilters.sample.arch.BaseViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.launch
 
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.refreshData()
     }
 
-    private class ViewModel : BaseViewModel() {
+    private class ViewModel : BaseViewModel<MainViewState>(Initial) {
         fun refreshData() = launch {
 
         }
