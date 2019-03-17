@@ -10,29 +10,6 @@ void brightness(AndroidBitmapInfo *info, void *pixels, jfloat brightnessValue);
 
 int rgb_clamp(int value);
 
-extern "C" JNIEXPORT void JNICALL
-Java_com_fanhl_jnidemo_ImageFilter_brightness(JNIEnv *env, jclass obj, jobject bitmap, jfloat brightnessValue) {
-    AndroidBitmapInfo info;
-    int ret;
-    void *pixels;
-
-    if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
-        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
-        return;
-    }
-    if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
-        LOGE("Bitmap format is not RGBA_8888 !");
-        return;
-    }
-    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
-        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
-    }
-
-    brightness(&info, pixels, brightnessValue);
-
-    AndroidBitmap_unlockPixels(env, bitmap);
-}
-
 /**
  * 过滤亮度
  * @param info
@@ -79,4 +56,26 @@ int rgb_clamp(int value) {
 
 extern "C" JNIEXPORT jstring JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_test(JNIEnv *env, jclass type) {
     return env->NewStringUTF("asdf");
+}
+extern "C" JNIEXPORT void JNICALL
+Java_com_fanhl_photofilters_PhotoFilterApi_brightness(JNIEnv *env, jclass obj, jobject bitmap, jfloat brightnessValue) {
+    AndroidBitmapInfo info;
+    int ret;
+    void *pixels;
+
+    if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
+        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
+        return;
+    }
+    if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+        LOGE("Bitmap format is not RGBA_8888 !");
+        return;
+    }
+    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
+        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+    }
+
+    brightness(&info, pixels, brightnessValue);
+
+    AndroidBitmap_unlockPixels(env, bitmap);
 }
