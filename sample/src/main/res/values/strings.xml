@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">PhotoFilters</string>
+    <string name="grid_layout_manager">androidx.recyclerview.widget.GridLayoutManager</string>
+    <string name="filter">Filter</string>
 </resources>
