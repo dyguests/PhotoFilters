@@ -8,10 +8,17 @@ public class PhotoFilterApi {
     }
 
     /**
-     * 过滤亮度
+     * 变亮
      *
      * @param bmp
      * @param brightness
      */
     public native static void brightness(Bitmap bmp, float brightness);
+
+    /**
+     * 反色
+     *
+     * @param bmp
+     */
+    public native static void inverted(Bitmap bmp);
 }
