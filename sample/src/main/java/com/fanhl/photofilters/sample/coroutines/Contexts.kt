@@ -11,6 +11,10 @@ object Contexts {
     val IO = Executors.newFixedThreadPool(4).asCoroutineDispatcher()
 }
 
+public suspend fun <T> withContextUI(
+    block: suspend CoroutineScope.() -> T
+) = withContext(Contexts.UI, block)
+
 public suspend fun <T> withContextIO(
     block: suspend CoroutineScope.() -> T
 ) = withContext(Contexts.IO, block)
