@@ -4,15 +4,10 @@
 
 #include <android/bitmap.h>
 
-#ifndef PHOTOFILTERS_PHOTO_FILTERS_H
-#define PHOTOFILTERS_PHOTO_FILTERS_H
-
-
-class photo_filters {
-
-};
-
-
-#endif //PHOTOFILTERS_PHOTO_FILTERS_H
+void brightness(AndroidBitmapInfo *info, void *pixels, jfloat brightnessValue);
 
 void gray(AndroidBitmapInfo *info, void *pixels);
+
+void inverted(AndroidBitmapInfo *info, void *pixels);
+
+int rgb_clamp(int value);
