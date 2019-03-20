@@ -127,3 +127,9 @@ int rgb_clamp(int value) {
     }
     return value;
 }
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_fanhl_photofilters_PhotoFilterApi_gray(JNIEnv *env, jclass type, jobject bmp) {
+
+}

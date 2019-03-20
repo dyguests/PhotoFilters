@@ -21,4 +21,11 @@ public class PhotoFilterApi {
      * @param bmp
      */
     public native static void inverted(Bitmap bmp);
+
+    /**
+     * 反色
+     *
+     * @param bmp
+     */
+    public native static void gray(Bitmap bmp);
 }
