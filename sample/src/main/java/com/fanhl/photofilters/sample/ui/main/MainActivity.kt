@@ -3,7 +3,7 @@ package com.fanhl.photofilters.sample.ui.main
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.fanhl.photofilters.sample.R
 import com.fanhl.photofilters.sample.adapter.FilterAdapter
 import com.fanhl.photofilters.sample.arch.BaseViewModel
@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private val viewModel by lazy { ViewModelProvider.AndroidViewModelFactory.getInstance(application).create(ViewModel::class.java) }
+    private val viewModel by lazy { ViewModelProviders.of(this).get(ViewModel::class.java) }
 
     private val adapter by lazy { FilterAdapter() }
 
@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private class ViewModel : BaseViewModel<MainViewState>(Initial) {
         private val diskDataSource by lazy { DiskDataSource() }
+
         fun refreshData() = launch {
             val list = withContextIO {
                 diskDataSource.getFilters()
