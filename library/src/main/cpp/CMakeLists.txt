@@ -17,15 +17,9 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        native-lib.cpp)
-add_library( # Sets the name of the library.
-        photo_filters
-
-        # Sets the library as a shared library.
-        SHARED
-
-        # Provides a relative path to your source file(s).
-        photo_filters.cpp)
+        native-lib.cpp
+        photo_filters.cpp
+        )
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by
@@ -46,7 +40,6 @@ find_library( # Sets the name of the path variable.
 
 target_link_libraries( # Specifies the target library.
         native-lib
-        photo_filters
         -ljnigraphics
         # Links the target library to the log library
         # included in the NDK.
