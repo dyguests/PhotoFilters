@@ -49,7 +49,11 @@ void bitmap_hold_pixels(JNIEnv *env, jobject bitmap) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
     }
 
-    gray(&info, pixels);
+    void (*hold_process)(AndroidBitmapInfo *, void *) = [](AndroidBitmapInfo *info, void *pixels) {
+        gray(info, pixels);
+    };
+
+    hold_process(&info, pixels);
 
     AndroidBitmap_unlockPixels(env, bitmap);
 }
