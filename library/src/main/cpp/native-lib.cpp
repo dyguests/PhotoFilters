@@ -166,7 +166,7 @@ void gray(AndroidBitmapInfo *info, void *pixels) {
             green = (int) ((line[xx] & 0x0000FF00) >> 8);
             blue = (int) (line[xx] & 0x00000FF);
 
-            int average = (red + green + blue) / 3
+            int average = (red + green + blue) / 3;
             //manipulate each value
             red = average;
             green = average;
