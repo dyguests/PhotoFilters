@@ -32,7 +32,13 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_bri
     AndroidBitmap_unlockPixels(env, bitmap);
 }
 
-void bitmap_hold_pixels(JNIEnv *env, jobject bitmap) {
+/**
+ * 在hold_process前为bitmap加锁，之后解锁
+ * @param env
+ * @param bitmap
+ * @param hold_process
+ */
+void bitmap_hold_pixels(JNIEnv *env, jobject bitmap, void (*hold_process)(AndroidBitmapInfo *, void *)) {
     AndroidBitmapInfo info;
     int ret;
     void *pixels;
@@ -48,10 +54,6 @@ void bitmap_hold_pixels(JNIEnv *env, jobject bitmap) {
     if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
     }
-
-    void (*hold_process)(AndroidBitmapInfo *, void *) = [](AndroidBitmapInfo *info, void *pixels) {
-        gray(info, pixels);
-    };
 
     hold_process(&info, pixels);
 
@@ -81,7 +83,9 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_inv
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_gray(JNIEnv *env, jclass type, jobject bitmap) {
-    bitmap_hold_pixels(env, bitmap);
+    bitmap_hold_pixels(env, bitmap, [](AndroidBitmapInfo *info, void *pixels) {
+        gray(info, pixels);
+    });
 
 }
 
