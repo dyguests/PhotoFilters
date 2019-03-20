@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private class ViewModel : BaseViewModel<MainViewState>(Initial) {
+    class ViewModel : BaseViewModel<MainViewState>(Initial) {
         private val diskDataSource by lazy { DiskDataSource() }
 
         fun refreshData() = launch {
