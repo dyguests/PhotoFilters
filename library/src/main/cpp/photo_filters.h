@@ -3,6 +3,7 @@
 //
 
 #include <android/bitmap.h>
+#include <functional>
 
 /**
  * 在hold_process前为bitmap加锁，之后解锁
@@ -10,7 +11,7 @@
  * @param bitmap
  * @param hold_process
  */
-void bitmap_hold_pixels(JNIEnv *env, jobject bitmap, void (*hold_process)(AndroidBitmapInfo *, void *));
+void bitmap_hold_pixels(JNIEnv *env, jobject bitmap, const std::function<void(AndroidBitmapInfo *, void *)> &hold_process);
 
 
 void brightness(AndroidBitmapInfo *info, void *pixels, jfloat brightnessValue);

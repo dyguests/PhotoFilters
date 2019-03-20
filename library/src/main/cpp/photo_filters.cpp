@@ -5,6 +5,7 @@
 #include <jni.h>
 #include <android/bitmap.h>
 #include <android/log.h>
+#include <functional>
 #include "photo_filters.h"
 
 #define  LOG_TAG    "photo_filters"
@@ -17,7 +18,7 @@
  * @param bitmap
  * @param hold_process
  */
-void bitmap_hold_pixels(JNIEnv *env, jobject bitmap, void (*hold_process)(AndroidBitmapInfo *, void *)) {
+void bitmap_hold_pixels(JNIEnv *env, jobject bitmap, const std::function<void(AndroidBitmapInfo *, void *)> &hold_process) {
     AndroidBitmapInfo info;
     int ret;
     void *pixels;
