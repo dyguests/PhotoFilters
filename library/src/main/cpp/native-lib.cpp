@@ -12,6 +12,8 @@ void inverted(AndroidBitmapInfo *info, void *pixels);
 
 int rgb_clamp(int value);
 
+void gray(AndroidBitmapInfo *info, void *pixels);
+
 extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_brightness(JNIEnv *env, jclass obj, jobject bitmap, jfloat brightnessValue) {
     AndroidBitmapInfo info;
     int ret;
@@ -130,6 +132,53 @@ int rgb_clamp(int value) {
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_com_fanhl_photofilters_PhotoFilterApi_gray(JNIEnv *env, jclass type, jobject bmp) {
+Java_com_fanhl_photofilters_PhotoFilterApi_gray(JNIEnv *env, jclass type, jobject bitmap) {
+    AndroidBitmapInfo info;
+    int ret;
+    void *pixels;
 
+    if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
+        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
+        return;
+    }
+    if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+        LOGE("Bitmap format is not RGBA_8888 !");
+        return;
+    }
+    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
+        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+    }
+
+    gray(&info, pixels);
+
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
+
+void gray(AndroidBitmapInfo *info, void *pixels) {
+    int xx, yy, red, green, blue;
+    uint32_t *line;
+
+    for (yy = 0; yy < info->height; yy++) {
+        line = (uint32_t *) pixels;
+        for (xx = 0; xx < info->width; xx++) {
+            //extract the RGB values from the pixel
+            red = (int) ((line[xx] & 0x00FF0000) >> 16);
+            green = (int) ((line[xx] & 0x0000FF00) >> 8);
+            blue = (int) (line[xx] & 0x00000FF);
+
+            int average = (red + green + blue) / 3
+            //manipulate each value
+            red = average;
+            green = average;
+            blue = average;
+
+            // set the new pixel back in
+            line[xx] = (line[xx] & 0xFF000000)
+                       | ((red << 16) & 0x00FF0000)
+                       | ((green << 8) & 0x0000FF00)
+                       | (blue & 0x000000FF);
+        }
+
+        pixels = (char *) pixels + info->stride;
+    }
 }
