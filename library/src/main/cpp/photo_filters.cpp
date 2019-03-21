@@ -133,7 +133,16 @@ void inverted(AndroidBitmapInfo *info, void *pixels) {
 }
 
 void convolution(AndroidBitmapInfo *info, void *pixels, jobjectArray kernel) {
+    int x, y, r, g, b;
+    uint32_t *line;
 
+    for (y = 0; y < info->height; y++) {
+        line = (uint32_t *) pixels;
+        for (x = 0; x < info->width; x++) {
+
+        }
+    }
+    pixels = (char *) pixels + info->stride;
 }
 
 /**
