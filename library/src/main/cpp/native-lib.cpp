@@ -25,3 +25,6 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_gra
     });
 }
 
+extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_convolution(JNIEnv *env, jclass type, jobject bmp, jobjectArray kernel) {
+    //这里处理卷积运算
+}
