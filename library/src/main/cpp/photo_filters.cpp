@@ -132,6 +132,10 @@ void inverted(AndroidBitmapInfo *info, void *pixels) {
     }
 }
 
+void convolution(AndroidBitmapInfo *info, void *pixels, jobjectArray kernel) {
+
+}
+
 /**
  * 单个颜色值在区间在 [0,255] 之间
  * @param value

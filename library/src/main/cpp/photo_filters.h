@@ -20,4 +20,12 @@ void gray(AndroidBitmapInfo *info, void *pixels);
 
 void inverted(AndroidBitmapInfo *info, void *pixels);
 
+/**
+ * 卷积运算
+ * @param info
+ * @param pixels
+ * @param kernel
+ */
+void convolution(AndroidBitmapInfo *info, void *pixels, jobjectArray kernel);
+
 int rgb_clamp(int value);

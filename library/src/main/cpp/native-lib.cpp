@@ -8,7 +8,7 @@
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_brightness(JNIEnv *env, jclass obj, jobject bitmap, jfloat brightnessValue) {
-    bitmap_hold_pixels(env, bitmap, [=](AndroidBitmapInfo *info, void *pixels) {
+    bitmap_hold_pixels(env, bitmap, [brightnessValue](AndroidBitmapInfo *info, void *pixels) {
         brightness(info, pixels, brightnessValue);
     });
 }
@@ -25,6 +25,8 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_gra
     });
 }
 
-extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_convolution(JNIEnv *env, jclass type, jobject bmp, jobjectArray kernel) {
-    //这里处理卷积运算
+extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_convolution(JNIEnv *env, jclass type, jobject bitmap, jobjectArray kernel) {
+    bitmap_hold_pixels(env, bitmap, [kernel](AndroidBitmapInfo *info, void *pixels) {
+        convolution(info, pixels, kernel);
+    });
 }
