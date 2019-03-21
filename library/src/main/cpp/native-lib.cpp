@@ -26,6 +26,8 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_gra
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_convolution(JNIEnv *env, jclass type, jobject bitmap, jobjectArray kernel) {
+//    env->GetArrayLength(kernel)
+
     bitmap_hold_pixels(env, bitmap, [kernel](AndroidBitmapInfo *info, void *pixels) {
         convolution(info, pixels, kernel);
     });
