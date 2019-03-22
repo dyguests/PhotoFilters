@@ -41,5 +41,5 @@ public class PhotoFilterApi {
      * @param kernel
      *         卷积核
      */
-    public native static void convolution(Bitmap bmp, byte[][] kernel);
+    public native static void convolution(Bitmap bmp, int[][] kernel);
 }
