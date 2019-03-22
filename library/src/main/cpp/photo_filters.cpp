@@ -133,17 +133,20 @@ void inverted(AndroidBitmapInfo *info, void *pixels) {
 }
 
 void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]) {
+    uint32_t height = info->height;
+    uint32_t width = info->width;
+
     // 存放卷积后的值
-    uint32_t bmpTmp[info->height][info->width];
+    uint32_t bmpTmp[height][width];
 
     int x, y, r, g, b;
     uint32_t *line;
 
-    for (y = 0; y < info->height; y++) {
+    for (y = 0; y < height; y++) {
 ////        line = (uint32_t *) pixels;
-        for (x = 0; x < info->width; x++) {
+        for (x = 0; x < width; x++) {
 //            bmpTmp[y][x] = ((uint32_t *) ((char *) pixels + y * (info->stride)))[x];
-            bmpTmp[y][x] = 1;
+//            bmpTmp[y][x] = 1;
         }
 ////    pixels = (char *) pixels + info->stride;
     }
@@ -151,9 +154,9 @@ void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]) {
     int xx, yy, red, green, blue;
 //    uint32_t *line;
 
-    for (yy = 0; yy < info->height; yy++) {
+    for (yy = 0; yy < height; yy++) {
         line = (uint32_t *) pixels;
-        for (xx = 0; xx < info->width; xx++) {
+        for (xx = 0; xx < width; xx++) {
             //extract the RGB values from the pixel
             red = (int) ((line[xx] & 0x00FF0000) >> 16);
             green = (int) ((line[xx] & 0x0000FF00) >> 8);
