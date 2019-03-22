@@ -27,6 +27,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_gra
 }
 
 extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_convolution(JNIEnv *env, jclass obj, jobject bitmap, jobjectArray kernel) {
+    // 把 jobjectArray 转换成 c数组
     jsize rows, cols;
 
     rows = env->GetArrayLength(kernel);

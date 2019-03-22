@@ -26,6 +26,6 @@ void inverted(AndroidBitmapInfo *info, void *pixels);
  * @param pixels
  * @param kernel
  */
-void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]);
+void convolution(AndroidBitmapInfo *info, void *pixels, int (*kernel)[3]);
 
 int rgb_clamp(int value);
