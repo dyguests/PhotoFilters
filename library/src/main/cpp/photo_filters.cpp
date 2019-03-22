@@ -134,19 +134,29 @@ void inverted(AndroidBitmapInfo *info, void *pixels) {
 
 void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]) {
     // 存放卷积后的值
-    int bmpTmp[info->height][info->width];
+    uint32_t bmpTmp[info->height][info->width];
 
     int x, y, r, g, b;
-    uint32_t *line;
+//    uint32_t *line;
+    uint32_t *pixel;
 
 
     for (y = 0; y < info->height; y++) {
-        line = (uint32_t *) pixels;
+//        line = (uint32_t *) pixels;
         for (x = 0; x < info->width; x++) {
-
+            pixel = (uint32_t *) pixels + y * (info->stride) + x;
+            bmpTmp[y][x] = *pixel;
         }
+//    pixels = (char *) pixels + info->stride;
     }
-    pixels = (char *) pixels + info->stride;
+
+//    uint32_t &pixel2 = *(uint32_t *) pixels;
+//    for (y = 0; y < info->height; y++) {
+//        for (x = 0; x < info->width; x++) {
+//            pixel2 = *((uint32_t *) pixels + y * (info->stride) + x);
+//            pixel2 = bmpTmp[y][x];
+//        }
+//    }
 }
 
 /**
