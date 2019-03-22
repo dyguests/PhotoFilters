@@ -139,6 +139,8 @@ void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]) {
 //    LOGI("width:%d,height:%d", width, height);
 
 //    // 存放卷积后的值
+    uint32_t pixelsCopy[height][width];
+    memcpy(pixelsCopy, pixels, height * (info->stride) + 1);
 
     int x, y, red, green, blue;
     uint32_t pixel;
