@@ -46,6 +46,49 @@ void bitmap_hold_pixels(JNIEnv *env, jobject bitmap, const std::function<void(An
     AndroidBitmap_unlockPixels(env, bitmap);
 }
 
+jobject copyBitmap(JNIEnv *env, jobject bitmap) {
+    AndroidBitmapInfo info;
+    int ret;
+    void *pixels;
+    void *newPixels;
+
+    if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
+        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
+        return NULL;
+    }
+    if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+        LOGE("Bitmap format is not RGBA_8888 !");
+        return NULL;
+    }
+    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
+        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+    }
+
+    jclass bitmapCls = env->GetObjectClass(bitmap);
+    jmethodID createBitmapFunction = env->GetStaticMethodID(bitmapCls, "createBitmap", "(IILandroid/graphics/Bitmap$Config;)Landroid/graphics/Bitmap;");
+    jstring configName = env->NewStringUTF("ARGB_8888");
+    jclass bitmapConfigClass = env->FindClass("android/graphics/Bitmap$Config");
+    jmethodID valueOfBitmapConfigFunction = env->GetStaticMethodID(bitmapConfigClass, "valueOf", "(Ljava/lang/String;)Landroid/graphics/Bitmap$Config;");
+    jobject bitmapConfig = env->CallStaticObjectMethod(bitmapConfigClass, valueOfBitmapConfigFunction, configName);
+    jobject newBitmap = env->CallStaticObjectMethod(bitmapCls, createBitmapFunction, info.height, info.height, bitmapConfig);
+
+    if ((ret = AndroidBitmap_lockPixels(env, newBitmap, &newPixels)) < 0) {
+        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+        return NULL;
+    }
+
+    for (int i = 0; i < info.height * info.height; i++) {
+        ((char *) newPixels)[i * 4] = 1;
+        ((char *) newPixels)[i * 4 + 1] = 10;
+        ((char *) newPixels)[i * 4 + 2] = 100;
+        ((char *) newPixels)[i * 4 + 3] = 255;
+    }
+
+    AndroidBitmap_unlockPixels(env, newBitmap);
+    AndroidBitmap_unlockPixels(env, bitmap);
+
+    return newBitmap;
+}
 
 /**
  * 过滤亮度
@@ -138,18 +181,94 @@ void inverted(AndroidBitmapInfo *info, void *pixels) {
     }
 }
 
-void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]) {
+void convolution(JNIEnv *env, jobject bitmap, jobjectArray kernel) {
+    // 把 jobjectArray 转换成 c数组
+    jsize rows, cols;
+
+    rows = env->GetArrayLength(kernel);
+
+    if (rows % 2 == 0 || rows == 0) {
+        LOGE("wrong kernel");
+        return;
+    }
+
+    //目前只管3x3的
+    if (rows != 3) {
+        LOGE("wrong kernel");
+        return;
+    }
+
+    jarray line = (jintArray) env->GetObjectArrayElement(kernel, 0);
+
+    cols = env->GetArrayLength(line);
+
+    if (rows != cols) {
+        LOGE("wrong kernel");
+        return;
+    }
+
+    jsize colsTmp;
+    for (jint i = 1; i < rows; i++) {
+        jarray lineTmp = (jintArray) env->GetObjectArrayElement(kernel, i);
+        colsTmp = env->GetArrayLength(lineTmp);
+        if (cols != colsTmp) {
+            LOGE("wrong kernel");
+            return;
+        }
+    }
+
+    int kernelC[3][3];
+
+    for (jint y = 0; y < rows; y++) {
+        jarray col = (jintArray) env->GetObjectArrayElement(kernel, y);
+        jint *colData = env->GetIntArrayElements((jintArray) col, nullptr);
+        for (jint x = 0; x < cols; x++) {
+            kernelC[rows][cols] = (int) colData[x];
+        }
+    }
+
+    jobject newBitmap = copyBitmap(env, bitmap);
+
+    AndroidBitmapInfo info, newInfo;
+    int ret;
+    void *pixels, *newPixels;
+
+    if ((ret = AndroidBitmap_getInfo(env, bitmap, &info)) < 0) {
+        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
+        return;
+    }
+    if (info.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+        LOGE("Bitmap format is not RGBA_8888 !");
+        return;
+    }
+    if ((ret = AndroidBitmap_lockPixels(env, bitmap, &pixels)) < 0) {
+        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+    }
+
+    if ((ret = AndroidBitmap_getInfo(env, newBitmap, &newInfo)) < 0) {
+        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
+        return;
+    }
+    if (newInfo.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+        LOGE("Bitmap format is not RGBA_8888 !");
+        return;
+    }
+    if ((ret = AndroidBitmap_lockPixels(env, newBitmap, &newPixels)) < 0) {
+        LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
+    }
+
+    convolution(&info, pixels, &newInfo, newPixels, kernelC);
+
+    AndroidBitmap_unlockPixels(env, newBitmap);
+    AndroidBitmap_unlockPixels(env, bitmap);
+}
+
+void convolution(AndroidBitmapInfo *info, void *pixels, AndroidBitmapInfo *infoCopy, void *pixelsCopy, int kernel[3][3]) {
     uint32_t height = info->height;
     uint32_t width = info->width;
 
-//    LOGI("width:%d,height:%d", width, height);
-
-//    // 存放卷积后的值
-    uint32_t pixelsCopyM[height][width];
-    void *pixelsCopy = pixelsCopyM;
-//    memcpy(pixelsCopy, pixels, height * (info->stride) + 1);
-
-    int x, y, red, green, blue;
+    //回家写 2019/03/22
+    int x, y;//, red, green, blue;
     uint32_t pixel;
 
     for (y = 0; y < height; y++) {
