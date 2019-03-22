@@ -72,7 +72,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_con
         }
     }
 
-    bitmap_hold_pixels(env, bitmap, [kernelC](AndroidBitmapInfo *info, void *pixels) {
+    bitmap_hold_pixels(env, bitmap, [&kernelC](AndroidBitmapInfo *info, void *pixels) {
         convolution(info, pixels, kernelC);
     });
 }
