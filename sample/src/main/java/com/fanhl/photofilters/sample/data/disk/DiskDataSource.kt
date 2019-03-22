@@ -14,7 +14,7 @@ class DiskDataSource {
                 arrayOf(
                     intArrayOf(1, 0, 0),
                     intArrayOf(0, 1, 0),
-                    intArrayOf(0, 0, 1)
+                    intArrayOf(0, 0, -1)
                 )
             )
         }

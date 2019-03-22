@@ -155,26 +155,42 @@ void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]) {
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
             operateKernel(info, pixels, x, y, kernel, &pixel);
-
-            red = (int) ((pixel & 0x00FF0000) >> 16);
-            green = (int) ((pixel & 0x0000FF00) >> 8);
-            blue = (int) (pixel & 0x00000FF);
-
-            //manipulate each value
-            red = rgb_clamp(255 - red);
-            green = rgb_clamp(255 - green);
-            blue = rgb_clamp(255 - blue);
-
-            ((uint32_t *) ((char *) pixels + y * (info->stride)))[x] = (pixel & 0xFF000000)
-                                                                       | ((red << 16) & 0x00FF0000)
-                                                                       | ((green << 8) & 0x0000FF00)
-                                                                       | (blue & 0x000000FF);
+            ((uint32_t *) ((char *) pixels + y * (info->stride)))[x] = pixel;
         }
     }
 }
 
 void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kernel[3][3], uint32_t *pixel) {
-    *pixel = get_pixel_clamp(info, pixels, x, y);
+    uint32_t sumR, sumG, sumB = 0;
+    uint32_t pixelCenter = 255;
+    int red, green, blue;
+
+    for (int ky = -1; ky < 3 - 1; ky++) {
+        for (int kx = -1; kx < 3 - 1; kx++) {
+            uint32_t argb = get_pixel_clamp(info, pixels, x + kx, y + ky);
+            int kernelXY = kernel[ky + 1][kx + 1];
+            if (ky == 0 && kx == 0) {
+                pixelCenter = argb;
+            }
+            red = (int) ((argb & 0x00FF0000) >> 16);
+            green = (int) ((argb & 0x0000FF00) >> 8);
+            blue = (int) (argb & 0x00000FF);
+
+            red = rgb_clamp(red * kernelXY);
+            green = rgb_clamp(green * kernelXY);
+            blue = rgb_clamp(blue * kernelXY);
+
+            sumR += red;
+            sumG += green;
+            sumB += blue;
+        }
+    }
+
+//    *pixel = get_pixel_clamp(info, pixels, x, y);
+    *pixel = (pixelCenter & 0xFF000000)
+             | ((sumR << 16) & 0x00FF0000)
+             | ((sumG << 8) & 0x0000FF00)
+             | (sumB & 0x000000FF);
 }
 
 uint32_t get_pixel_clamp(AndroidBitmapInfo *info, void *pixels, int x, int y) {
