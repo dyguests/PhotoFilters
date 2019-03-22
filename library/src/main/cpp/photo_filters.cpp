@@ -9,7 +9,7 @@
 #include "photo_filters.h"
 
 #define  LOG_TAG    "photo_filters"
-//#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
+#define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
 /**
@@ -136,45 +136,31 @@ void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]) {
     uint32_t height = info->height;
     uint32_t width = info->width;
 
-    // 存放卷积后的值
-    uint32_t bmpTmp[height][width];
+//    LOGI("width:%d,height:%d", width, height);
 
-    int x, y, r, g, b;
-    uint32_t *line;
+//    // 存放卷积后的值
+
+    int x, y, red, green, blue;
+    uint32_t pixel;
 
     for (y = 0; y < height; y++) {
-////        line = (uint32_t *) pixels;
         for (x = 0; x < width; x++) {
-//            bmpTmp[y][x] = ((uint32_t *) ((char *) pixels + y * (info->stride)))[x];
-//            bmpTmp[y][x] = 1;
-        }
-////    pixels = (char *) pixels + info->stride;
-    }
+            pixel = ((uint32_t *) ((char *) pixels + y * (info->stride)))[x];
 
-    int xx, yy, red, green, blue;
-//    uint32_t *line;
-
-    for (yy = 0; yy < height; yy++) {
-        line = (uint32_t *) pixels;
-        for (xx = 0; xx < width; xx++) {
-            //extract the RGB values from the pixel
-            red = (int) ((line[xx] & 0x00FF0000) >> 16);
-            green = (int) ((line[xx] & 0x0000FF00) >> 8);
-            blue = (int) (line[xx] & 0x00000FF);
+            red = (int) ((pixel & 0x00FF0000) >> 16);
+            green = (int) ((pixel & 0x0000FF00) >> 8);
+            blue = (int) (pixel & 0x00000FF);
 
             //manipulate each value
             red = rgb_clamp(255 - red);
             green = rgb_clamp(255 - green);
             blue = rgb_clamp(255 - blue);
 
-            // set the new pixel back in
-            line[xx] = (line[xx] & 0xFF000000)
-                       | ((red << 16) & 0x00FF0000)
-                       | ((green << 8) & 0x0000FF00)
-                       | (blue & 0x000000FF);
+            ((uint32_t *) ((char *) pixels + y * (info->stride)))[x] = (pixel & 0xFF000000)
+                                                                       | ((red << 16) & 0x00FF0000)
+                                                                       | ((green << 8) & 0x0000FF00)
+                                                                       | (blue & 0x000000FF);
         }
-
-        pixels = (char *) pixels + info->stride;
     }
 }
 
