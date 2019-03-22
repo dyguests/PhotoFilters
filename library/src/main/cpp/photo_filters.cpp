@@ -12,6 +12,12 @@
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
+uint32_t get_pixel_clamp(AndroidBitmapInfo *info, void *pixels, int x, int y);
+
+uint32_t get_pixel(AndroidBitmapInfo *info, void *pixels, int x, int y);
+
+void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kernel[3][3], uint32_t *pixel);
+
 /**
  * 在hold_process前为bitmap加锁，之后解锁
  * @param env
@@ -148,7 +154,7 @@ void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]) {
 
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            pixel = ((uint32_t *) ((char *) pixels + y * (info->stride)))[x];
+            operateKernel(info, pixels, x, y, kernel, &pixel);
 
             red = (int) ((pixel & 0x00FF0000) >> 16);
             green = (int) ((pixel & 0x0000FF00) >> 8);
@@ -165,6 +171,29 @@ void convolution(AndroidBitmapInfo *info, void *pixels, int kernel[3][3]) {
                                                                        | (blue & 0x000000FF);
         }
     }
+}
+
+void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kernel[3][3], uint32_t *pixel) {
+    *pixel = get_pixel_clamp(info, pixels, x, y);
+}
+
+uint32_t get_pixel_clamp(AndroidBitmapInfo *info, void *pixels, int x, int y) {
+    if (x < 0) {
+        x = 0;
+    } else if (x >= info->width) {
+        x = info->width - 1;
+    }
+    if (y < 0) {
+        y = 0;
+    } else if (y >= info->height) {
+        y = info->height - 1;
+    }
+
+    return get_pixel(info, pixels, x, y);
+}
+
+uint32_t get_pixel(AndroidBitmapInfo *info, void *pixels, int x, int y) {
+    return ((uint32_t *) ((char *) pixels + y * (info->stride)))[x];
 }
 
 /**
