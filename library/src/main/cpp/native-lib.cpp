@@ -36,6 +36,12 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_con
         return;
     }
 
+    //目前只管3x3的
+    if (rows != 3) {
+        LOGE("wrong kernel");
+        return;
+    }
+
     jarray line = (jintArray) env->GetObjectArrayElement(kernel, 0);
 
     cols = env->GetArrayLength(line);
@@ -55,7 +61,7 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_con
         }
     }
 
-    int kernelC[rows][cols];
+    int kernelC[3][3];
 
     for (jint y = 0; y < rows; y++) {
         jarray col = (jintArray) env->GetObjectArrayElement(kernel, y);
@@ -66,6 +72,6 @@ extern "C" JNIEXPORT void JNICALL Java_com_fanhl_photofilters_PhotoFilterApi_con
     }
 
     bitmap_hold_pixels(env, bitmap, [kernelC](AndroidBitmapInfo *info, void *pixels) {
-        convolution(info, pixels, kernel);
+        convolution(info, pixels, kernelC);
     });
 }
