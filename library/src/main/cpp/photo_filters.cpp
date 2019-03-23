@@ -273,7 +273,7 @@ void convolution(AndroidBitmapInfo *info, void *pixels, AndroidBitmapInfo *infoC
 
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            operateKernel(infoCopy, pixelsCopy, x, y, kernel, &pixel);
+            operateKernel(info, pixelsCopy, x, y, kernel, &pixel);
             ((uint32_t *) ((char *) pixels + y * (info->stride)))[x] = pixel;
         }
     }
@@ -288,9 +288,9 @@ void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kern
         for (int kx = -1; kx < 3 - 1; kx++) {
             argb = get_pixel_clamp(info, pixels, x + kx, y + ky);
 
-            if (ky == 0 && kx == 0) {
-                LOGI("原值 %d", argb);
-            }
+//            if (ky == 0 && kx == 0) {
+//                LOGI("原值 %d", argb);
+//            }
             kernelXY = kernel[ky + 1][kx + 1];
 
             alpha = (int) ((argb & 0xFF000000) >> 24);
@@ -321,7 +321,7 @@ void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kern
              | ((sumG << 8) & 0x0000FF00)
              | (sumB & 0x000000FF);
 
-    LOGI("新值 %d", &pixel);
+//    LOGI("新值 %d", &pixel);
 }
 
 uint32_t get_pixel_clamp(AndroidBitmapInfo *info, void *pixels, int x, int y) {
