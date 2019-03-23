@@ -229,7 +229,7 @@ void convolution(JNIEnv *env, jobject bitmap, jobjectArray kernel) {
 
     jobject newBitmap = copyBitmap(env, bitmap);
 
-    AndroidBitmapInfo info, newInfo;
+    AndroidBitmapInfo info/*, newInfo*/;
     int ret;
     void *pixels, *newPixels;
 
@@ -245,25 +245,25 @@ void convolution(JNIEnv *env, jobject bitmap, jobjectArray kernel) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
     }
 
-    if ((ret = AndroidBitmap_getInfo(env, newBitmap, &newInfo)) < 0) {
-        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
-        return;
-    }
-    if (newInfo.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
-        LOGE("Bitmap format is not RGBA_8888 !");
-        return;
-    }
+//    if ((ret = AndroidBitmap_getInfo(env, newBitmap, &newInfo)) < 0) {
+//        LOGE("AndroidBitmap_getInfo() failed ! error=%d", ret);
+//        return;
+//    }
+//    if (newInfo.format != ANDROID_BITMAP_FORMAT_RGBA_8888) {
+//        LOGE("Bitmap format is not RGBA_8888 !");
+//        return;
+//    }
     if ((ret = AndroidBitmap_lockPixels(env, newBitmap, &newPixels)) < 0) {
         LOGE("AndroidBitmap_lockPixels() failed ! error=%d", ret);
     }
 
-    convolution(&info, pixels, &newInfo, newPixels, kernelC);
+    convolution(&info, pixels, newPixels, kernelC);
 
     AndroidBitmap_unlockPixels(env, newBitmap);
     AndroidBitmap_unlockPixels(env, bitmap);
 }
 
-void convolution(AndroidBitmapInfo *info, void *pixels, AndroidBitmapInfo *infoCopy, void *pixelsCopy, int kernel[3][3]) {
+void convolution(AndroidBitmapInfo *info, void *pixels, void *pixelsCopy, int kernel[3][3]) {
     uint32_t height = info->height;
     uint32_t width = info->width;
 
