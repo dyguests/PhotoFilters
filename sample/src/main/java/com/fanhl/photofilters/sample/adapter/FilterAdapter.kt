@@ -8,6 +8,7 @@ import com.chad.library.adapter.base.BaseViewHolder
 import com.fanhl.photofilters.sample.R
 import com.fanhl.photofilters.sample.coroutines.Contexts
 import com.fanhl.photofilters.sample.coroutines.withContextIO
+import com.fanhl.photofilters.sample.coroutines.withContextUI
 import com.fanhl.photofilters.sample.domain.model.Filter
 import kotlinx.android.synthetic.main.item_sample.view.*
 import kotlinx.coroutines.CoroutineScope
@@ -34,9 +35,9 @@ class FilterAdapter : BaseQuickAdapter<Filter, BaseViewHolder>(R.layout.item_sam
                 withContextIO {
                     val bitmap = original.copy(Bitmap.Config.ARGB_8888, true)
                     item?.action?.invoke(bitmap)
-//                    withContextUI {
-                    img_type.setImageBitmap(bitmap)
-//                    }
+                    withContextUI {
+                        img_type.setImageBitmap(bitmap)
+                    }
                 }
             }
             tv_type.text = item?.name
