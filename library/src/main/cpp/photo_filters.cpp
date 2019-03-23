@@ -77,11 +77,11 @@ jobject copyBitmap(JNIEnv *env, jobject bitmap) {
         return NULL;
     }
 
-    for (int i = 0; i < info.height * info.height; i++) {
-        ((char *) newPixels)[i * 4] = 1;
-        ((char *) newPixels)[i * 4 + 1] = 10;
-        ((char *) newPixels)[i * 4 + 2] = 100;
-        ((char *) newPixels)[i * 4 + 3] = 255;
+    for (int i = 0; i < info.width * info.height; i++) {
+        ((char *) newPixels)[i * 4] = ((char *) pixels)[i * 4];
+        ((char *) newPixels)[i * 4 + 1] = ((char *) pixels)[i * 4 + 1];
+        ((char *) newPixels)[i * 4 + 2] = ((char *) pixels)[i * 4 + 2];
+        ((char *) newPixels)[i * 4 + 3] = ((char *) pixels)[i * 4 + 3];
     }
 
     AndroidBitmap_unlockPixels(env, newBitmap);
@@ -273,20 +273,25 @@ void convolution(AndroidBitmapInfo *info, void *pixels, AndroidBitmapInfo *infoC
 
     for (y = 0; y < height; y++) {
         for (x = 0; x < width; x++) {
-            operateKernel(info, pixels, x, y, kernel, &pixel);
+            operateKernel(infoCopy, pixelsCopy, x, y, kernel, &pixel);
             ((uint32_t *) ((char *) pixels + y * (info->stride)))[x] = pixel;
         }
     }
 }
 
 void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kernel[3][3], uint32_t *pixel) {
-    uint32_t sumA, sumR, sumG, sumB = 0;
+    int sumA = 0, sumR = 0, sumG = 0, sumB = 0;
+    uint32_t argb;
     int alpha, red, green, blue;
-
+    int kernelXY;
     for (int ky = -1; ky < 3 - 1; ky++) {
         for (int kx = -1; kx < 3 - 1; kx++) {
-            uint32_t argb = get_pixel_clamp(info, pixels, x + kx, y + ky);
-            int kernelXY = kernel[ky + 1][kx + 1];
+            argb = get_pixel_clamp(info, pixels, x + kx, y + ky);
+
+//            if (ky == 0 && kx == 0) {
+//                LOGI("原值 %d", argb);
+//            }
+            kernelXY = kernel[ky + 1][kx + 1];
 
             alpha = (int) ((argb & 0xFF000000) >> 24);
             red = (int) ((argb & 0x00FF0000) >> 16);
@@ -305,11 +310,18 @@ void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kern
         }
     }
 
+    sumA = rgb_clamp(sumA);
+    sumR = rgb_clamp(sumR);
+    sumG = rgb_clamp(sumG);
+    sumB = rgb_clamp(sumB);
+
 //    *pixel = get_pixel_clamp(info, pixels, x, y);
     *pixel = ((sumA << 24) & 0xFF000000)
              | ((sumR << 16) & 0x00FF0000)
              | ((sumG << 8) & 0x0000FF00)
              | (sumB & 0x000000FF);
+
+//    LOGI("新值 %d", &pixel);
 }
 
 uint32_t get_pixel_clamp(AndroidBitmapInfo *info, void *pixels, int x, int y) {
