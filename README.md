@@ -2,6 +2,8 @@
 
 Some PhotoFilters for Android.
 
+![](./graphics/sample.png)
+
 PhotoFilters/图像滤镜
 
 Use Jni,C\C++ to implement `Photo Filters`
