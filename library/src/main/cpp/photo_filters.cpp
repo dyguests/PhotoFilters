@@ -221,9 +221,9 @@ void convolution(JNIEnv *env, jobject bitmap, jobjectArray kernel) {
 
     for (jint y = 0; y < rows; y++) {
         jarray col = (jintArray) env->GetObjectArrayElement(kernel, y);
-        jint *colData = env->GetIntArrayElements((jintArray) col, nullptr);
+        int32_t *colData = env->GetIntArrayElements((jintArray) col, nullptr);
         for (jint x = 0; x < cols; x++) {
-            kernelC[rows][cols] = (int) colData[x];
+            kernelC[y][x] = (int) colData[x];
         }
     }
 
