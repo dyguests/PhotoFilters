@@ -288,9 +288,9 @@ void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kern
         for (int kx = -1; kx < 3 - 1; kx++) {
             argb = get_pixel_clamp(info, pixels, x + kx, y + ky);
 
-//            if (ky == 0 && kx == 0) {
-//                LOGI("原值 %d", argb);
-//            }
+            if (ky == 0 && kx == 0) {
+                LOGI("原值 %d", argb);
+            }
             kernelXY = kernel[ky + 1][kx + 1];
 
             alpha = (int) ((argb & 0xFF000000) >> 24);
@@ -298,10 +298,10 @@ void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kern
             green = (int) ((argb & 0x0000FF00) >> 8);
             blue = (int) (argb & 0x00000FF);
 
-            alpha = rgb_clamp(alpha * kernelXY);
-            red = rgb_clamp(red * kernelXY);
-            green = rgb_clamp(green * kernelXY);
-            blue = rgb_clamp(blue * kernelXY);
+            alpha = alpha * kernelXY;
+            red = red * kernelXY;
+            green = green * kernelXY;
+            blue = blue * kernelXY;
 
             sumA += alpha;
             sumR += red;
@@ -321,7 +321,7 @@ void operateKernel(AndroidBitmapInfo *info, void *pixels, int x, int y, int kern
              | ((sumG << 8) & 0x0000FF00)
              | (sumB & 0x000000FF);
 
-//    LOGI("新值 %d", &pixel);
+    LOGI("新值 %d", &pixel);
 }
 
 uint32_t get_pixel_clamp(AndroidBitmapInfo *info, void *pixels, int x, int y) {

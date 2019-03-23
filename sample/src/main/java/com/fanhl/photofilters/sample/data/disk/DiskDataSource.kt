@@ -17,7 +17,7 @@ class DiskDataSource {
                     intArrayOf(0, 0, 0)
                 )
             )
-        },
+        }/*,
         Filter("Convolution") {
             PhotoFilterApi.convolution(
                 it,
@@ -27,6 +27,6 @@ class DiskDataSource {
                     intArrayOf(-1, -1, -1)
                 )
             )
-        }
+        }*/
     )
 }
